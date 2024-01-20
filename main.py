@@ -74,12 +74,16 @@ vehicle_group = pygame.sprite.Group()
 player = Player("graphics/player.png", player_x, player_y)
 player_group.add(player)
 
-# other cars
+# other cars todo: add more variety to npc cars
 image_filenames = ["npc1.png", "npc2.png"]
 vehicle_images = []
 for image_filename in image_filenames:
     image = pygame.image.load("graphics/" + image_filename)
     vehicle_images.append(image)
+
+# crash
+crash = pygame.image.load("graphics/crash.png")
+crash_rect = crash.get_rect()
 
 # game loop
 timer = pygame.time.Clock()
@@ -100,6 +104,21 @@ while runnig:
                 player.rect.x -= 100
             elif event.key == K_RIGHT and player.rect.center[0] < right_lane:
                 player.rect.x += 100
+
+            # check for side collision after changing lane
+            for vehicle in vehicle_group:
+                if pygame.sprite.collide_rect(player, vehicle):
+
+                    # todo: introduce lives
+                    game_over = True
+
+                    # create crash between player and npc
+                    if event.key == K_LEFT:
+                        player.rect.left = vehicle.rect.right
+                        crash_rect.center = [player.rect.left, (player.rect.center[1] + vehicle.rect.center[1]) / 2]
+                    elif event.key == K_RIGHT:
+                        player.rect.right = vehicle.rect.left
+                        crash_rect.center = [player.rect.right, (player.rect.center[1] + vehicle.rect.center[1]) / 2]
 
     # drawing the track
     window.fill(green)
@@ -152,6 +171,31 @@ while runnig:
 
     # draw vehicles
     vehicle_group.draw(window)
+
+    # display score
+    font = pygame.font.Font(pygame.font.get_default_font(), 16)
+    text = font.render('Score: ' + str(score), True, white)
+    text_rect = text.get_rect()
+    text_rect.center = (50, 20)
+    window.blit(text, text_rect)
+
+    # check for headbutt
+    if pygame.sprite.spritecollide(player, vehicle_group, True):
+        game_over = True
+        crash_rect.center = [player.rect.center[0], player.rect.top]
+
+    # game over
+    if game_over:
+        window.blit(crash, crash_rect)
+        pygame.draw.rect(window, red, (0, 50, width, 100))
+        font = pygame.font.Font(pygame.font.get_default_font(), 16)
+        text = font.render("GAME OVER", True, white)
+        text_rect = text.get_rect()
+        text_rect.center = (width / 2, 100)
+        window.blit(text, text_rect)
+
+        # todo set speed to 0 and disable movement
+        speed = 0
 
     pygame.display.update()
 
