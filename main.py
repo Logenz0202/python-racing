@@ -66,14 +66,24 @@ class Player(Vehicle):
 player_x = 250
 player_y = 400
 
-# player car
+# vehicle groups
 player_group = pygame.sprite.Group()
+vehicle_group = pygame.sprite.Group()
+
+# player car
 player = Player("graphics/player.png", player_x, player_y)
 player_group.add(player)
 
+# other cars
+image_filenames = ["npc1.png", "npc2.png"]
+vehicle_images = []
+for image_filename in image_filenames:
+    image = pygame.image.load("graphics/" + image_filename)
+    vehicle_images.append(image)
+
 # game loop
 timer = pygame.time.Clock()
-fps = 100
+fps = 120
 runnig = True
 
 while runnig:
@@ -109,6 +119,39 @@ while runnig:
 
     # draw player car
     player_group.draw(window)
+
+    # draw other cars
+    if len(vehicle_group) < 2:
+
+        # check if there is enough space to add a new vehicle
+        add_vehicle = True
+        for vehicle in vehicle_group:
+            if vehicle.rect.top < vehicle.rect.height * 1.5:
+                add_vehicle = False
+
+        if add_vehicle:
+            lane = random.choice(lanes)
+            image = random.choice(vehicle_images)
+            vehicle = Vehicle(image, lane, height / -2)
+            vehicle_group.add(vehicle)
+
+    # move and draw other cars
+    for vehicle in vehicle_group:
+        vehicle.rect.y += speed
+
+        # remove cars that are out of the screen
+        if vehicle.rect.top > height:
+            vehicle.kill()
+
+            # increase score for each car that is safely passed
+            score += 1
+
+            # increase speed for every 5 points
+            if score > 0 and score % 3 == 0:
+                speed += 0.25
+
+    # draw vehicles
+    vehicle_group.draw(window)
 
     pygame.display.update()
 
