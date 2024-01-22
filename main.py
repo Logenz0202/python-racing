@@ -3,7 +3,6 @@ from vehicles import *
 
 pygame.init()
 
-# game loop
 timer = pygame.time.Clock()
 fps = 120
 runnig = True
@@ -17,7 +16,7 @@ while runnig:
             runnig = False
 
         # player movement
-        if event.type == KEYDOWN:
+        if event.type == KEYDOWN and not game_over:
             if event.key == K_LEFT and player.rect.center[0] > left_lane:
                 player.rect.x -= 100
             elif event.key == K_RIGHT and player.rect.center[0] < right_lane:
@@ -26,8 +25,6 @@ while runnig:
             # check for side collision after changing lane
             for vehicle in vehicle_group:
                 if pygame.sprite.collide_rect(player, vehicle):
-
-                    # todo: introduce lives
                     game_over = True
 
                     # create crash between player and npc
@@ -111,8 +108,6 @@ while runnig:
         text_rect = text.get_rect()
         text_rect.center = (width / 2, 100)
         window.blit(text, text_rect)
-
-        # todo set speed to 0 and disable movement
         speed = 0
 
     pygame.display.update()

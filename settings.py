@@ -21,7 +21,6 @@ grey = (160, 160, 160)
 
 # game settings
 game_over = False
-lives = 3
 speed = 2
 score = 0
 
