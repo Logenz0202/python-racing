@@ -87,7 +87,7 @@ while runnig:
     vehicle_group.draw(window)
 
     # tree related stuff
-    if len(tree_group) < 7:
+    if len(tree_group) < 100:
         # check if there is enough space to add a new tree
         add_tree = True
         for tree in tree_group:
