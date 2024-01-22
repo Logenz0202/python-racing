@@ -1,5 +1,5 @@
 from settings import *
-from vehicles import *
+from objects import *
 
 pygame.init()
 
@@ -35,14 +35,13 @@ while runnig:
                         player.rect.right = vehicle.rect.left
                         crash_rect.center = [player.rect.right, (player.rect.center[1] + vehicle.rect.center[1]) / 2]
 
-    # drawing the track
+    # drawing the grass and road
     window.fill(green)
-
     pygame.draw.rect(window, grey, road)
-
     pygame.draw.rect(window, red, left_edge)
     pygame.draw.rect(window, red, right_edge)
 
+    # draw road markers
     marker_move_y += speed * 2
     if marker_move_y >= marker_height * 2:
         marker_move_y = 0
@@ -86,6 +85,30 @@ while runnig:
 
     # draw vehicles
     vehicle_group.draw(window)
+
+    # tree related stuff
+    if len(tree_group) < 7:
+        # check if there is enough space to add a new tree
+        add_tree = True
+        for tree in tree_group:
+            if tree.rect.top < tree.rect.height * 1.5:
+                add_tree = False
+
+        if add_tree:
+            x_side = random.choice(["left", "right"])
+            if x_side == "left": x_position = random.randint(20, 80)
+            else: x_position = random.randint(420, 480)
+            tree_image = pygame.image.load("graphics/tree.png")
+            tree = Tree(tree_image, x_position, height / -2)
+            tree_group.add(tree)
+
+    for tree in tree_group:
+        tree.rect.y += speed * 2
+
+        if tree.rect.top > height:
+            tree.kill()
+
+    tree_group.draw(window)
 
     # display score
     font = pygame.font.Font(pygame.font.get_default_font(), 16)

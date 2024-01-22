@@ -7,7 +7,7 @@ width = 500
 height = 500
 window_size = (width, height)
 window = pygame.display.set_mode(window_size)
-pygame.display.set_caption("Pro Racer")
+pygame.display.set_caption("Szymon Ligenza - Python Project - 01.2024")
 
 # colors
 red = (236, 45, 61)

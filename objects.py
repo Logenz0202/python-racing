@@ -41,3 +41,19 @@ for image_filename in image_filenames:
 # crash
 crash = pygame.image.load("graphics/crash.png")
 crash_rect = crash.get_rect()
+
+
+class Tree(pygame.sprite.Sprite):
+    def __init__(self, image, x, y):
+        pygame.sprite.Sprite.__init__(self)
+
+        new_width = image.get_rect().width * 4
+        new_height = image.get_rect().height * 5
+
+        self.image = pygame.transform.scale(image, (new_width, new_height))
+
+        self.rect = self.image.get_rect()
+        self.rect.center = [x, y]
+
+# tree group
+tree_group = pygame.sprite.Group()
