@@ -111,11 +111,12 @@ while runnig:
     tree_group.draw(window)
 
     # display score
-    font = pygame.font.Font(pygame.font.get_default_font(), 16)
-    text = font.render('Score: ' + str(score), True, white)
-    text_rect = text.get_rect()
-    text_rect.center = (50, 20)
-    window.blit(text, text_rect)
+    if not game_over:
+        font = pygame.font.Font(pygame.font.get_default_font(), 16)
+        text = font.render('Score: ' + str(score), True, white)
+        text_rect = text.get_rect()
+        text_rect.center = (50, 20)
+        window.blit(text, text_rect)
 
     # check for headbutt
     if pygame.sprite.spritecollide(player, vehicle_group, True):
@@ -124,14 +125,45 @@ while runnig:
 
     # game over
     if game_over:
+        speed = 0
+
+        # display crash and game over
         window.blit(crash, crash_rect)
-        pygame.draw.rect(window, red, (0, 50, width, 100))
+        pygame.draw.rect(window, blue, (0, 68, width, 100))
         font = pygame.font.Font(pygame.font.get_default_font(), 16)
         text = font.render("GAME OVER", True, white)
         text_rect = text.get_rect()
         text_rect.center = (width / 2, 100)
         window.blit(text, text_rect)
-        speed = 0
+
+        # display score
+        score_font = pygame.font.Font(pygame.font.get_default_font(), 12)
+        score_text = score_font.render("Score: " + str(score), True, white)
+        score_rect = score_text.get_rect()
+        score_rect.center = (width / 2, 120)
+        window.blit(score_text, score_rect)
+
+        # play again?
+        prompt_font = pygame.font.Font(pygame.font.get_default_font(), 12)
+        prompt_text = prompt_font.render("Would you like to play again? Y/N", True, white)
+        prompt_rect = prompt_text.get_rect()
+        prompt_rect.center = (width / 2, 140)
+        window.blit(prompt_text, prompt_rect)
+
+        # restart or quit
+        keys = pygame.key.get_pressed()
+        # press 'Y' to restart
+        if keys[pygame.K_y]:
+            # reset game settings
+            game_over = False
+            speed = 2
+            score = 0
+            player.rect.center = [middle_lane, player.rect.centery]
+            vehicle_group.empty()
+            tree_group.empty()
+        # press 'N' to quit
+        elif keys[pygame.K_n]:
+            pygame.quit()
 
     pygame.display.update()
 
